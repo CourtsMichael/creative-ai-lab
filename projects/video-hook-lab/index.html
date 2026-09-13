@@ -3,26 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Video Hook Lab</title>
+<title>Video Hook Lab — Short-form Preproduction</title>
 <style>
-:root{font-family:Inter,system-ui,sans-serif;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b0b0d;color:#f5f5f7;min-height:100vh;display:grid;place-items:center;padding:24px}.app{width:min(760px,100%);background:#151518;border:1px solid #29292e;border-radius:24px;padding:32px}h1{font-size:clamp(2rem,6vw,4rem);margin:0 0 8px;letter-spacing:-.05em}.tag{color:#a1a1aa;margin-bottom:28px}label{display:block;margin:18px 0 8px;font-size:.9rem;color:#d4d4d8}input,select,button{width:100%;border-radius:12px;border:1px solid #34343a;background:#202024;color:#fff;padding:14px;font:inherit}button{margin-top:20px;background:#fff;color:#111;border:0;font-weight:700;cursor:pointer}.result{margin-top:24px;padding:20px;border-radius:16px;background:#0f0f11;min-height:90px;line-height:1.5}.meta{margin-top:12px;color:#71717a;font-size:.8rem}
+:root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#09090b;color:#f4f4f5;min-height:100vh;padding:24px}.wrap{width:min(980px,100%);margin:auto}.hero{padding:20px 0 8px}h1{font-size:clamp(2.7rem,7vw,5.7rem);line-height:.92;letter-spacing:-.06em;margin:0}.sub{color:#a1a1aa;max-width:700px;font-size:1.05rem}.panel{background:#151518;border:1px solid #2a2a2f;border-radius:24px;padding:24px;margin-top:22px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}label{display:block;font-size:.85rem;color:#d4d4d8;margin:0 0 7px}input,select,button{width:100%;border-radius:12px;border:1px solid #34343a;background:#202024;color:#fff;padding:14px;font:inherit}button{background:#fff;color:#111;font-weight:800;border:0;cursor:pointer}.output{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}.card{background:#0f0f11;border:1px solid #26262b;border-radius:18px;padding:18px}.card h3{margin:0 0 10px;font-size:.9rem;text-transform:uppercase;letter-spacing:.08em;color:#a1a1aa}.card p,.card ul{margin:0;line-height:1.55}.card ul{padding-left:18px}.score{font-size:2.2rem;font-weight:800;letter-spacing:-.04em}.meta{color:#71717a;font-size:.8rem;margin:18px 0 4px}@media(max-width:720px){.grid,.output{grid-template-columns:1fr}.panel{padding:18px}}
 </style>
 </head>
 <body>
-<main class="app">
+<div class="wrap">
+<header class="hero">
 <h1>Video Hook Lab</h1>
-<p class="tag">A tiny creative tool for generating opening-hook directions for short-form video.</p>
-<label for="topic">Video topic</label>
-<input id="topic" placeholder="e.g. Why most restaurant videos lose viewers">
-<label for="style">Hook style</label>
-<select id="style"><option value="curiosity">Curiosity gap</option><option value="problem">Problem first</option><option value="contrarian">Contrarian</option><option value="result">Result first</option></select>
-<button id="generate">Generate hook direction</button>
-<section class="result" id="result">Enter a topic and generate a direction.</section>
-<p class="meta">Creative prototype · Human-directed, AI-assisted development</p>
-</main>
+<p class="sub">A short-form preproduction assistant for editors and creative directors. Turn one idea into a stronger hook, 30-second structure, B-roll plan, CTA and retention checklist.</p>
+</header>
+<section class="panel">
+<div class="grid">
+<div><label for="topic">Video topic</label><input id="topic" placeholder="e.g. How to make a boring talking-head video more engaging"></div>
+<div><label for="platform">Platform</label><select id="platform"><option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option><option>LinkedIn</option></select></div>
+<div><label for="style">Hook style</label><select id="style"><option value="curiosity">Curiosity gap</option><option value="problem">Problem first</option><option value="contrarian">Contrarian</option><option value="result">Result first</option></select></div>
+<div><label for="duration">Target duration</label><select id="duration"><option value="15">15 sec</option><option value="30" selected>30 sec</option><option value="45">45 sec</option><option value="60">60 sec</option></select></div>
+</div>
+<div style="margin-top:16px"><button id="generate">Build preproduction plan</button></div>
+<div class="output" id="output"></div>
+<p class="meta">Creative prototype · Human-directed, AI-assisted development · Built for practical editorial thinking</p>
+</section>
+</div>
 <script>
-const templates={curiosity:t=>`Start with the unanswered question: “What if ${t.toLowerCase()} isn't working for the reason you think?” Reveal the answer only after the viewer has committed to the next beat.`,problem:t=>`Open directly on the pain point around “${t}”. Show the consequence visually in the first 1–2 seconds, then promise a specific fix.`,contrarian:t=>`Lead with a confident reversal: “Most advice about ${t.toLowerCase()} gets this backwards.” Immediately show one visual proof point.`,result:t=>`Show the strongest outcome related to “${t}” before explaining how it happened. Use the result as visual evidence, not just narration.`};
-document.querySelector('#generate').addEventListener('click',()=>{const t=document.querySelector('#topic').value.trim();const s=document.querySelector('#style').value;document.querySelector('#result').textContent=t?templates[s](t):'Add a video topic first.'});
+const hooks={
+curiosity:t=>`Open with: “What if ${t.toLowerCase()} is failing for a reason almost nobody notices?” Hold the answer for the next beat.`,
+problem:t=>`Open on the visible pain point: “If ${t.toLowerCase()} feels flat, this is probably why.” Show the problem before explaining it.`,
+contrarian:t=>`Lead with a reversal: “Most advice about ${t.toLowerCase()} gets this backwards.” Cut immediately to proof.`,
+result:t=>`Show the strongest outcome first, then say: “This is what changed when we fixed ${t.toLowerCase()}.”`
+};
+const byId=id=>document.getElementById(id);
+function card(title,html){return `<article class="card"><h3>${title}</h3>${html}</article>`}
+byId('generate').addEventListener('click',()=>{
+ const topic=byId('topic').value.trim(); if(!topic){byId('output').innerHTML=card('Start here','<p>Add a video topic first.</p>');return}
+ const style=byId('style').value,platform=byId('platform').value,duration=Number(byId('duration').value);
+ const b1=Math.max(2,Math.round(duration*.15)),b2=Math.max(5,Math.round(duration*.45)),b3=Math.max(8,Math.round(duration*.78));
+ const score=style==='result'?92:style==='contrarian'?89:style==='curiosity'?87:84;
+ const structure=`<ul><li><strong>0–${b1}s:</strong> Hook + pattern interrupt</li><li><strong>${b1}–${b2}s:</strong> Context or tension</li><li><strong>${b2}–${b3}s:</strong> Proof, example or payoff</li><li><strong>${b3}–${duration}s:</strong> CTA or final takeaway</li></ul>`;
+ const broll=`<ul><li>Cold open on the strongest visual proof</li><li>Cutaway showing the problem in context</li><li>Close-up/detail shot for emphasis</li><li>Before/after or side-by-side comparison</li><li>End on a clean branded or result-driven frame</li></ul>`;
+ const edit=`<ul><li>First cut within 1 second</li><li>Use text only for the key idea, not full dialogue</li><li>Introduce a visual change every 2–4 seconds</li><li>Prioritize clean captions and readable hierarchy</li><li>Keep dead air out of the first 5 seconds</li></ul>`;
+ const cta=platform==='LinkedIn'?'End with a direct professional takeaway or question that invites discussion.':'End with one low-friction action: save, comment, follow, or watch the next piece.';
+ byId('output').innerHTML=
+ card('Hook',`<p>${hooks[style](topic)}</p>`)+
+ card(`${duration}s structure`,structure)+
+ card('B-roll ideas',broll)+
+ card('Edit rhythm',edit)+
+ card('CTA',`<p>${cta}</p>`)+
+ card('Retention score',`<div class="score">${score}/100</div><p>Strong starting concept. Biggest gain: prove the hook visually in the opening beat.</p>`);
+});
 </script>
 </body>
 </html>
