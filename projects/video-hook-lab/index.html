@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Video Hook Lab</title>
+<style>
+:root{font-family:Inter,system-ui,sans-serif;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b0b0d;color:#f5f5f7;min-height:100vh;display:grid;place-items:center;padding:24px}.app{width:min(760px,100%);background:#151518;border:1px solid #29292e;border-radius:24px;padding:32px}h1{font-size:clamp(2rem,6vw,4rem);margin:0 0 8px;letter-spacing:-.05em}.tag{color:#a1a1aa;margin-bottom:28px}label{display:block;margin:18px 0 8px;font-size:.9rem;color:#d4d4d8}input,select,button{width:100%;border-radius:12px;border:1px solid #34343a;background:#202024;color:#fff;padding:14px;font:inherit}button{margin-top:20px;background:#fff;color:#111;border:0;font-weight:700;cursor:pointer}.result{margin-top:24px;padding:20px;border-radius:16px;background:#0f0f11;min-height:90px;line-height:1.5}.meta{margin-top:12px;color:#71717a;font-size:.8rem}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>Video Hook Lab</h1>
+<p class="tag">A tiny creative tool for generating opening-hook directions for short-form video.</p>
+<label for="topic">Video topic</label>
+<input id="topic" placeholder="e.g. Why most restaurant videos lose viewers">
+<label for="style">Hook style</label>
+<select id="style"><option value="curiosity">Curiosity gap</option><option value="problem">Problem first</option><option value="contrarian">Contrarian</option><option value="result">Result first</option></select>
+<button id="generate">Generate hook direction</button>
+<section class="result" id="result">Enter a topic and generate a direction.</section>
+<p class="meta">Creative prototype · Human-directed, AI-assisted development</p>
+</main>
+<script>
+const templates={curiosity:t=>`Start with the unanswered question: “What if ${t.toLowerCase()} isn't working for the reason you think?” Reveal the answer only after the viewer has committed to the next beat.`,problem:t=>`Open directly on the pain point around “${t}”. Show the consequence visually in the first 1–2 seconds, then promise a specific fix.`,contrarian:t=>`Lead with a confident reversal: “Most advice about ${t.toLowerCase()} gets this backwards.” Immediately show one visual proof point.`,result:t=>`Show the strongest outcome related to “${t}” before explaining how it happened. Use the result as visual evidence, not just narration.`};
+document.querySelector('#generate').addEventListener('click',()=>{const t=document.querySelector('#topic').value.trim();const s=document.querySelector('#style').value;document.querySelector('#result').textContent=t?templates[s](t):'Add a video topic first.'});
+</script>
+</body>
+</html>
